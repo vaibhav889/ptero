@@ -77,7 +77,7 @@ async def status(interaction: discord.Interaction):
 
 @tree.command(name="ip", description="Get the Minecraft server IP")
 async def ip(interaction: discord.Interaction):
-    await interaction.response.send_message("📡 Server IP: `paid-1.guardxhosting.in`")
+    await interaction.response.send_message("📡 Server IP: `paid-1.guardxhosting.in:25501`")
 
 @tree.command(name="uptime", description="Check how long the server has been online")
 async def uptime(interaction: discord.Interaction):

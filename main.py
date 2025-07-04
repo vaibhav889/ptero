@@ -77,7 +77,7 @@ async def status(interaction: discord.Interaction):
 
 @tree.command(name="ip", description="Get the Minecraft server IP")
 async def ip(interaction: discord.Interaction):
-    await interaction.response.send_message("📡 Server IP: `paid-1.guardxhosting.in:25501`")
+    await interaction.response.send_message("📡 Server IP: `paid-1.guardxhosting.in`")
 
 @tree.command(name="uptime", description="Check how long the server has been online")
 async def uptime(interaction: discord.Interaction):
@@ -176,10 +176,10 @@ async def backup(interaction: discord.Interaction, action: Choice[str]):
 
         create_url = f"{PANEL_URL}/api/client/servers/{SERVER_ID}/backups"
         response = requests.post(create_url, json={"name": "DiscordBot Backup"}, headers=headers)
-        if response.status_code == 201:
+        if response.status_code == 201 or response.status_code == 200:
             await interaction.followup.send("✅ Backup is being created!")
         else:
-            await interaction.followup.send("❌ Failed to create backup.")
+            await interaction.followup.send("❌ Failed to create backup, but it might have been triggered.")
 
     elif action.value == "delete":
         list_url = f"{PANEL_URL}/api/client/servers/{SERVER_ID}/backups"
@@ -201,17 +201,7 @@ async def backup(interaction: discord.Interaction, action: Choice[str]):
 
 @client.event
 async def on_ready():
-    print(f"Logged in as {client.user}")
-    try:
-        print("Registering commands manually...")
-        guild = discord.Object(id=GUILD_ID)
-        tree.copy_global_to(guild=guild)
-        synced = await tree.sync(guild=guild)
-        print(f"Synced {len(synced)} commands to guild {GUILD_ID}")
-    except Exception as e:
-        print(f"Sync failed: {e}")
+    await tree.sync(guild=discord.Object(id=GUILD_ID))
+    print(f"Ready as {client.user}")
 
-try:
-    client.run(TOKEN)
-except Exception as e:
-    print("Bot failed to start:", e)
+client.run(TOKEN)

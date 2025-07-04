@@ -153,6 +153,50 @@ async def whitelist(interaction: discord.Interaction, action: Choice[str], playe
     else:
         await interaction.followup.send("❌ Failed to send whitelist command.")
 
+@tree.command(name="ban", description="Ban a player and their IP (admin only)")
+@app_commands.describe(player="Minecraft username to ban")
+async def ban(interaction: discord.Interaction, player: str):
+    await interaction.response.defer()
+    if not is_admin(interaction.user.id):
+        return await interaction.followup.send("❌ You are not authorized.")
+
+    commands = [
+        f"ban {player}",
+        f"ban-ip {player}"
+    ]
+    success = True
+    for cmd in commands:
+        r = requests.post(f'{PANEL_URL}/api/client/servers/{SERVER_ID}/command', json={"command": cmd}, headers=headers)
+        if r.status_code != 204:
+            success = False
+
+    if success:
+        await interaction.followup.send(f"✅ Banned {player} and their IP.")
+    else:
+        await interaction.followup.send(f"❌ Failed to fully ban {player}.")
+
+@tree.command(name="unban", description="Unban a player and their IP (admin only)")
+@app_commands.describe(player="Minecraft username to unban")
+async def unban(interaction: discord.Interaction, player: str):
+    await interaction.response.defer()
+    if not is_admin(interaction.user.id):
+        return await interaction.followup.send("❌ You are not authorized.")
+
+    commands = [
+        f"pardon {player}",
+        f"pardon-ip {player}"
+    ]
+    success = True
+    for cmd in commands:
+        r = requests.post(f'{PANEL_URL}/api/client/servers/{SERVER_ID}/command', json={"command": cmd}, headers=headers)
+        if r.status_code != 204:
+            success = False
+
+    if success:
+        await interaction.followup.send(f"✅ Unbanned {player} and their IP.")
+    else:
+        await interaction.followup.send(f"❌ Failed to fully unban {player}.")
+
 @tree.command(name="backup", description="Manage server backups (admin only)")
 @app_commands.describe(action="Action to perform: create or delete")
 @app_commands.choices(action=[

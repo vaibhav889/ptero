@@ -243,9 +243,18 @@ async def backup(interaction: discord.Interaction, action: Choice[str]):
         else:
             await interaction.followup.send("❌ Failed to delete backup.")
 
-@client.event
-async def on_ready():
-    await tree.sync(guild=discord.Object(id=GUILD_ID))
-    print(f"Ready as {client.user}")
-
-client.run(TOKEN)
+@client.eventasync def on_ready():
+    print(f"Logged in as {client.user}")
+    try:
+        print("Registering commands manually...")
+        guild = discord.Object(id=GUILD_ID)
+        tree.copy_global_to(guild=guild)
+        synced = await tree.sync(guild=guild)
+        print(f"Synced {len(synced)} commands to guild {GUILD_ID}")
+    except Exception as e:
+        print(f"Sync failed: {e}")
+        
+try:
+    client.run(TOKEN)
+except Exception as e:
+    print("Bot failed to start:", e)

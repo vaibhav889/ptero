@@ -243,7 +243,8 @@ async def backup(interaction: discord.Interaction, action: Choice[str]):
         else:
             await interaction.followup.send("❌ Failed to delete backup.")
 
-@client.eventasync def on_ready():
+@client.event
+async def on_ready():
     print(f"Logged in as {client.user}")
     try:
         print("Registering commands manually...")
